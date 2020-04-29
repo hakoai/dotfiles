@@ -5,5 +5,8 @@
     ~/.bashrc: bashrc
     ~/.bash_logout: bash_logout
     ~/.gitconfig: gitconfig
+    ~/.config/fish/fishfile: fishfile
+    ~/.config/fish/config.fish: config.fish
 
-
+- shell:
+    - [cd ~/ && git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install --all, Install Fzf]
