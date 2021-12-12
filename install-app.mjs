@@ -38,7 +38,7 @@ await $`fisher update`
 
 
 if (await nothrow($`type fnm`).exitCode !== 0) {
-    await $`curl -fsSL https://fnm.vercel.app/install | fish`
+    await $`curl -fsSL https://fnm.vercel.app/install | bash`
 }
 
 // fzf install
