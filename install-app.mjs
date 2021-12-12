@@ -36,6 +36,11 @@ if (await nothrow($`type fihser`).exitCode !== 0) {
 }
 await $`fisher update`
 
+if (await nothrow($`type omf`).exitCode !== 0) {
+    await $`curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish`
+}
+await $`omf update`
+
 
 if (await nothrow($`type fnm`).exitCode !== 0) {
     await $`curl -fsSL https://fnm.vercel.app/install | bash`
