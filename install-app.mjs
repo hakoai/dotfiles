@@ -43,7 +43,8 @@ await $`omf update`
 
 
 if (await nothrow($`type fnm`).exitCode !== 0) {
-    await $`curl -fsSL https://fnm.vercel.app/install | bash`
+    await $`curl -fsSL https://fnm.vercel.app/install > install`
+    await $`fish install -y --noninteractive`
 }
 
 // fzf install
