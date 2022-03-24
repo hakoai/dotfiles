@@ -24,7 +24,7 @@
     link:
         create: true
         relink: true
-        if: "[ $(uname -r | sed -n 's/.*\\( *Microsoft *\\).*/\\1/ip') ]"
+        if: "[ $(uname -r | sed -n 's/.*\\( *Microsoft?? *\\).*/\\1/ip') ]"
 
 - link:
     ~/.gitconfig.os:
