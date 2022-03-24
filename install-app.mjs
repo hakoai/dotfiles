@@ -27,6 +27,15 @@ if (await nothrow($`type tmux`).exitCode !== 0) {
         await $`sudo apt-get install tmux -y`
     }
 }
+// unzip install
+if (await nothrow($`type unzip`).exitCode !== 0) {
+    if (await nothrow($`[[ -f /etc/debian_version ]]`).exitCode === 0) {
+        await $`sudo apt-get update`
+        await $`sudo apt-get install unzip -y`
+    }
+}
+
+await $`sudo chsh $USER -s $(which fish)`
 
 // fisher install
 $.shell = '/usr/bin/fish'
@@ -37,15 +46,13 @@ if (await nothrow($`type fisher`).exitCode !== 0) {
 await $`fisher update`
 
 if (await nothrow($`type omf`).exitCode !== 0) {
-    await $`curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install > install`
-    await $`fish install --noninteractive --yes`
+    await $`curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | bash -s -- --noninteractive --yes`
 }
 await $`omf update`
 
 
 if (await nothrow($`type fnm`).exitCode !== 0) {
-    await $`curl -fsSL https://fnm.vercel.app/install > install`
-    await $`fish install -y --noninteractive`
+    await $`curl -fsSL https://fnm.vercel.app/install | bash`
 }
 
 // fzf install
