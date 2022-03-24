@@ -31,13 +31,14 @@ if (await nothrow($`type tmux`).exitCode !== 0) {
 // fisher install
 $.shell = '/usr/bin/fish'
 $.prefix = ''
-if (await nothrow($`type fihser`).exitCode !== 0) {
+if (await nothrow($`type fisher`).exitCode !== 0) {
     await $`curl -sL https://git.io/fisher | source && fisher update`
 }
 await $`fisher update`
 
 if (await nothrow($`type omf`).exitCode !== 0) {
-    await $`curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish`
+    await $`curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install > install`
+    await $`fish install --noninteractive --yes`
 }
 await $`omf update`
 
