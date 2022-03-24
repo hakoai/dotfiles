@@ -1,3 +1,5 @@
+[include]
+	path = .gitconfig.os
 [user]
 	email = hakoai64@gmail.com
 	name = hakoai

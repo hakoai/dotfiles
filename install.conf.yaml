@@ -1,15 +1,14 @@
+- clean: ['~']
+
 - defaults:
     link:
         create: true
         relink: true
-    shell:
-        stdout: true
-        stderr: true
-
-- clean: ['~']
 
 - link:
     ~/.gitconfig:
+    ~/.gitconfig.os:
+        path: gitconfig.none
     ~/.config/fish/config.fish:
         path: config.fish
     ~/.config/fish/fish_plugins:
@@ -20,6 +19,21 @@
         path: omf/channel
     ~/.config/omf/theme:
         path: omf/theme
+
+- defaults:
+    link:
+        create: true
+        relink: true
+        if: "[ $(uname -r | sed -n 's/.*\\( *Microsoft *\\).*/\\1/ip') ]"
+
+- link:
+    ~/.gitconfig.os:
+        path: gitconfig.wsl
+
+- defaults:
+    shell:
+        stdout: true
+        stderr: true
 
 - shell:
     -
