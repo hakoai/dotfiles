@@ -19,6 +19,8 @@
         path: omf/channel
     ~/.config/omf/theme:
         path: omf/theme
+    ~/.tmux.conf:
+        path: tmux.conf
 
 - defaults:
     link:

@@ -1,5 +1,5 @@
 #!/usr/bin/env zx
-
+$.verbose = false;
 
 // fish install
 if (await nothrow($`type fish`).exitCode !== 0) {
@@ -27,6 +27,11 @@ if (await nothrow($`type tmux`).exitCode !== 0) {
         await $`sudo apt-get install tmux -y`
     }
 }
+
+if(await nothrow($`[ -d "${os.homedir()}/.tmux/plugins/tpm" ]`).exitCode !== 0) {
+    await $`git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm`
+}
+
 // unzip install
 if (await nothrow($`type unzip`).exitCode !== 0) {
     if (await nothrow($`[[ -f /etc/debian_version ]]`).exitCode === 0) {
