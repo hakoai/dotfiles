@@ -51,7 +51,9 @@ if (await nothrow($`type fisher`).exitCode !== 0) {
 await $`fisher update`
 
 if (await nothrow($`type omf`).exitCode !== 0) {
-    await $`curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | bash -s -- --noninteractive --yes`
+    await $`curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install > installomf`
+    await $`fish installomf --noninteractive --yes`
+    await $`rm installomf`
 }
 await $`omf update`
 
