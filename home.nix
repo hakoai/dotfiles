@@ -56,6 +56,7 @@ in
 
   programs.starship.enable = true;
   # programs.fzf.enable = true;
+  programs.tmux.enable = true;
 
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [
