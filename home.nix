@@ -105,6 +105,10 @@ in
 
   programs.starship.enable = true;
   programs.fzf.enable = true;
+  programs.bat.enable = true;
+  programs.ripgrep.enable = true;
+  programs.eza.enable = true;
+  programs.fd.enable = true;
 
   programs.tmux = {
     enable = true;
@@ -142,6 +146,8 @@ in
       forwardAgent = false;
     };
   };
+  programs.awscli.enable = true;
+  programs.vim.enable = true;
 
   nixpkgs.config.allowUnfreePredicate =
     pkg:
@@ -149,6 +155,8 @@ in
       "claude-code"
       "codex"
     ];
+  programs.claude-code.enable = true;
+  programs.codex.enable = true;
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -167,11 +175,9 @@ in
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
-    pkgs.vim
     pkgs.nixfmt
-    pkgs.claude-code
-    pkgs.codex
     pkgs.socat
+    pkgs.dust
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
