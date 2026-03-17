@@ -1,18 +1,68 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   isWsl =
-    builtins.pathExists "/proc/sys/kernel/osrelease" &&
-    (
+    builtins.pathExists "/proc/sys/kernel/osrelease"
+    && (
       let
         osrelease = lib.toLower (builtins.readFile "/proc/sys/kernel/osrelease");
       in
-        lib.hasInfix "microsoft" osrelease || lib.hasInfix "wsl" osrelease
+      lib.hasInfix "microsoft" osrelease || lib.hasInfix "wsl" osrelease
     );
+
+  agentSock = "${config.home.homeDirectory}/.ssh/agent.sock";
+  npiperelay = pkgs.stdenvNoCC.mkDerivation {
+    pname = "npiperelay-bin";
+    version = "0.1.0";
+
+    src = pkgs.fetchzip {
+      url = "https://github.com/jstarks/npiperelay/releases/download/v0.1.0/npiperelay_windows_amd64.zip";
+      hash = "sha256-GcwreB8BXYGNKJihE2xeelsroy+JFqLK1NK7Ycqxw5g=";
+      stripRoot = false;
+    };
+
+    dontConfigure = true;
+    dontBuild = true;
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/bin
+      cp $src/npiperelay.exe $out/bin/npiperelay.exe
+      chmod +x $out/bin/npiperelay.exe
+      runHook postInstall
+    '';
+  };
 in
 {
   programs.fish = {
     enable = true;
+    interactiveShellInit = ''
+      set -gx SSH_AUTH_SOCK "${agentSock}"
+
+      if not test -d "$HOME/.ssh"
+        mkdir -p "$HOME/.ssh"
+        chmod 700 "$HOME/.ssh"
+      end
+
+      if test -S "$SSH_AUTH_SOCK"
+        ssh-add -l >/dev/null 2>&1
+        or rm -f "$SSH_AUTH_SOCK"
+      end
+
+      if not test -S "$SSH_AUTH_SOCK"
+        ${pkgs.socat}/bin/socat \
+          UNIX-LISTEN:"$SSH_AUTH_SOCK",fork \
+          EXEC:"${npiperelay}/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork \
+          >/dev/null 2>&1 &
+
+        disown
+      end
+    '';
     shellInitLast = ''
       starship init fish | source
     '';
@@ -48,8 +98,7 @@ in
 
     extraConfig = lib.mkMerge [
       (lib.mkIf isWsl {
-        credential.helper =
-          "/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe";
+        credential.helper = "/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe";
       })
     ];
   };
@@ -80,7 +129,22 @@ in
     '';
   };
 
-  nixpkgs.config.allowUnfreePredicate = pkg:
+  programs.ssh = {
+    enable = true;
+
+    enableDefaultConfig = false;
+    matchBlocks."*" = {
+      extraOptions = {
+        IdentityAgent = agentSock;
+      };
+      serverAliveInterval = 60;
+      serverAliveCountMax = 3;
+      forwardAgent = false;
+    };
+  };
+
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
     builtins.elem (lib.getName pkg) [
       "claude-code"
       "codex"
@@ -103,8 +167,11 @@ in
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
+    pkgs.vim
+    pkgs.nixfmt
     pkgs.claude-code
     pkgs.codex
+    pkgs.socat
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
@@ -154,8 +221,10 @@ in
   #
   #  /etc/profiles/per-user/hakoai/etc/profile.d/hm-session-vars.sh
   #
+
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "vim";
+    VISUAL = "code --wait";
   };
 
   # Let Home Manager install and manage itself.
