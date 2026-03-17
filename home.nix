@@ -76,15 +76,15 @@ in
           sha256 = "sha256-4c9ScQVf55b2ANaR7Lp/oqLeuK+FxH/wKmSNLV+b/CE=";
         };
       }
-      #{
-      #  name = "fzf";
-      #  src = pkgs.fetchFromGitHub {
-      #    owner = "PatrickF1";
-      #    repo = "fzf.fish";
-      #    rev = "0069dbbe06cc05482bfb13063b4b4eac26318992";
-      #    sha256 = "sha256-H7HgYT+okuVXo2SinrSs+hxAKCn4Q4su7oMbebKd/7s=";
-      #  };
-      #}
+      {
+        name = "fzf";
+        src = pkgs.fetchFromGitHub {
+          owner = "PatrickF1";
+          repo = "fzf.fish";
+          rev = "0069dbbe06cc05482bfb13063b4b4eac26318992";
+          sha256 = "sha256-H7HgYT+okuVXo2SinrSs+hxAKCn4Q4su7oMbebKd/7s=";
+        };
+      }
     ];
   };
 
@@ -104,7 +104,7 @@ in
   };
 
   programs.starship.enable = true;
-  # programs.fzf.enable = true;
+  programs.fzf.enable = true;
 
   programs.tmux = {
     enable = true;
