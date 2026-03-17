@@ -7,26 +7,45 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs =
-    { nixpkgs, home-manager, ... }:
-    let
-      system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+    inputs @ { flake-parts, nixpkgs, home-manager, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "x86_64-linux"
+        "aarch64-darwin"
+      ];
 
-      mkHome =
-        { isWsl }:
-        home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [ ./home/default.nix ];
-          extraSpecialArgs = { inherit isWsl; };
-        };
-    in
-    {
-      homeConfigurations = {
-        linux = mkHome { isWsl = false; };
-        wsl = mkHome { isWsl = true; };
+      flake = {
+        homeConfigurations =
+          let
+            mkHome =
+              { system, isWsl }:
+              let
+                pkgs = import nixpkgs { inherit system; };
+              in
+              home-manager.lib.homeManagerConfiguration {
+                inherit pkgs;
+                modules = [ ./home/default.nix ];
+                extraSpecialArgs = { inherit isWsl; };
+              };
+          in
+          {
+            linux = mkHome {
+              system = "x86_64-linux";
+              isWsl = false;
+            };
+            wsl = mkHome {
+              system = "x86_64-linux";
+              isWsl = true;
+            };
+            darwin = mkHome {
+              system = "aarch64-darwin";
+              isWsl = false;
+            };
+          };
       };
     };
 }
