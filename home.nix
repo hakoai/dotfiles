@@ -141,6 +141,12 @@ in
   programs.awscli.enable = true;
   programs.vim.enable = true;
 
+  programs.direnv = {
+    enable = true;
+    enableFishIntegration = true; # see note on other shells below
+    nix-direnv.enable = true;
+  };
+
   nixpkgs.config.allowUnfreePredicate =
     pkg:
     builtins.elem (lib.getName pkg) [
