@@ -13,24 +13,20 @@
     { nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs { inherit system; };
 
       mkHome =
-        isWsl:
+        { isWsl }:
         home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-
-          modules = [ ./home.nix ];
-
-          extraSpecialArgs = {
-            inherit isWsl;
-          };
+          modules = [ ./home/default.nix ];
+          extraSpecialArgs = { inherit isWsl; };
         };
     in
     {
       homeConfigurations = {
-        linux = mkHome false;
-        wsl = mkHome true;
+        linux = mkHome { isWsl = false; };
+        wsl = mkHome { isWsl = true; };
       };
     };
 }
