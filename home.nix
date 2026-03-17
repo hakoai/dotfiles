@@ -2,19 +2,11 @@
   config,
   pkgs,
   lib,
+  isWsl,
   ...
 }:
 
 let
-  isWsl =
-    builtins.pathExists "/proc/sys/kernel/osrelease"
-    && (
-      let
-        osrelease = lib.toLower (builtins.readFile "/proc/sys/kernel/osrelease");
-      in
-      lib.hasInfix "microsoft" osrelease || lib.hasInfix "wsl" osrelease
-    );
-
   agentSock = "${config.home.homeDirectory}/.ssh/agent.sock";
   npiperelay = pkgs.stdenvNoCC.mkDerivation {
     pname = "npiperelay-bin";
@@ -91,12 +83,12 @@ in
   programs.git = {
     enable = true;
 
-    settings = {
-      user.name = "hakoai";
-      user.email = "hakoai64@gmail.com";
-    };
+    settings = lib.mkMerge [
+      {
+        user.name = "hakoai";
+        user.email = "hakoai64@gmail.com";
+      }
 
-    extraConfig = lib.mkMerge [
       (lib.mkIf isWsl {
         credential.helper = "/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe";
       })
