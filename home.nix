@@ -8,53 +8,61 @@
 
 let
   agentSock = "${config.home.homeDirectory}/.ssh/agent.sock";
-  npiperelay = pkgs.stdenvNoCC.mkDerivation {
-    pname = "npiperelay-bin";
-    version = "0.1.0";
+  npiperelay =
+    if isWsl then
+      pkgs.stdenvNoCC.mkDerivation {
+        pname = "npiperelay-bin";
+        version = "0.1.0";
 
-    src = pkgs.fetchzip {
-      url = "https://github.com/jstarks/npiperelay/releases/download/v0.1.0/npiperelay_windows_amd64.zip";
-      hash = "sha256-GcwreB8BXYGNKJihE2xeelsroy+JFqLK1NK7Ycqxw5g=";
-      stripRoot = false;
-    };
+        src = pkgs.fetchzip {
+          url = "https://github.com/jstarks/npiperelay/releases/download/v0.1.0/npiperelay_windows_amd64.zip";
+          hash = "sha256-GcwreB8BXYGNKJihE2xeelsroy+JFqLK1NK7Ycqxw5g=";
+          stripRoot = false;
+        };
 
-    dontConfigure = true;
-    dontBuild = true;
+        dontConfigure = true;
+        dontBuild = true;
 
-    installPhase = ''
-      runHook preInstall
-      mkdir -p $out/bin
-      cp $src/npiperelay.exe $out/bin/npiperelay.exe
-      chmod +x $out/bin/npiperelay.exe
-      runHook postInstall
-    '';
-  };
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/bin
+          cp $src/npiperelay.exe $out/bin/npiperelay.exe
+          chmod +x $out/bin/npiperelay.exe
+          runHook postInstall
+        '';
+      }
+    else
+      null;
 in
 {
   programs.fish = {
     enable = true;
-    interactiveShellInit = ''
-      set -gx SSH_AUTH_SOCK "${agentSock}"
+    interactiveShellInit = lib.mkMerge [
+      ''
+        if not test -d "$HOME/.ssh"
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh"
+        end
+      ''
 
-      if not test -d "$HOME/.ssh"
-        mkdir -p "$HOME/.ssh"
-        chmod 700 "$HOME/.ssh"
-      end
+      (lib.mkIf isWsl ''
+        set -gx SSH_AUTH_SOCK "${agentSock}"
 
-      if test -S "$SSH_AUTH_SOCK"
-        ssh-add -l >/dev/null 2>&1
-        or rm -f "$SSH_AUTH_SOCK"
-      end
+        if test -S "$SSH_AUTH_SOCK"
+          ssh-add -l >/dev/null 2>&1
+          or rm -f "$SSH_AUTH_SOCK"
+        end
 
-      if not test -S "$SSH_AUTH_SOCK"
-        ${pkgs.socat}/bin/socat \
-          UNIX-LISTEN:"$SSH_AUTH_SOCK",fork \
-          EXEC:"${npiperelay}/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork \
-          >/dev/null 2>&1 &
+        if not test -S "$SSH_AUTH_SOCK"
+          ${pkgs.socat}/bin/socat \
+            UNIX-LISTEN:"$SSH_AUTH_SOCK",fork \
+            EXEC:"${npiperelay}/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork \
+            >/dev/null 2>&1 &
 
-        disown
-      end
-    '';
+          disown
+        end
+      '')
+    ];
     shellInitLast = ''
       starship init fish | source
     '';
@@ -77,6 +85,16 @@ in
           sha256 = "sha256-H7HgYT+okuVXo2SinrSs+hxAKCn4Q4su7oMbebKd/7s=";
         };
       }
+    ];
+
+    shellAliases = lib.mkMerge [
+      (lib.mkIf isWsl {
+        hms = "home-manager switch --flake ~/dotfiles#wsl";
+      })
+
+      (lib.mkIf (!isWsl) {
+        hms = "home-manager switch --flake ~/dotfiles#linux";
+      })
     ];
   };
 
@@ -174,7 +192,6 @@ in
   # environment.
   home.packages = [
     pkgs.nixfmt
-    pkgs.socat
     pkgs.dust
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
@@ -192,6 +209,9 @@ in
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+  ]
+  ++ lib.optionals isWsl [
+    pkgs.socat
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
