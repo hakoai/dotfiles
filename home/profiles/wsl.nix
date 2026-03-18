@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   programs.fish.shellAliases.hms = "home-manager switch --flake ~/dotfiles#wsl";
+  programs.fish.shellAliases.hmb = "home-manager build --flake ~/dotfiles#wsl";
 
   home.packages = [ pkgs.socat ];
 
