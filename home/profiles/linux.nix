@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   programs.fish.shellAliases.hms = "home-manager switch --flake ~/dotfiles#linux";
   programs.fish.shellAliases.hmb = "home-manager build --flake ~/dotfiles#linux";
@@ -12,4 +12,10 @@
       and nvd diff ~/.local/state/nix/profiles/home-manager $dotfiles/result
     '';
   };
+
+  fonts.fontconfig.enable = true;
+
+  home.packages = [
+    pkgs.nerd-fonts.fira-code
+  ];
 }
