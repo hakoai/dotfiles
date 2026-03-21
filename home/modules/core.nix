@@ -26,6 +26,7 @@
   programs.fd.enable = true;
   programs.awscli.enable = true;
   programs.vim.enable = true;
+  programs.zellij.enable = true;
   programs.claude-code.enable = true;
   programs.codex.enable = true;
 
