@@ -16,5 +16,6 @@
 
   home.packages = [
     pkgs.nerd-fonts.fira-code
+    pkgs.hackgen-nf-font
   ];
 }
