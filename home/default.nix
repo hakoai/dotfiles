@@ -1,4 +1,4 @@
-{ lib, isWsl, ... }:
+{ lib, isWsl, isDarwin, ... }:
 {
   imports =
     [
@@ -13,7 +13,10 @@
       ./modules/wsl-agent.nix
       ./profiles/wsl.nix
     ]
-    ++ lib.optionals (!isWsl) [
+    ++ lib.optionals isDarwin [
+      ./profiles/darwin.nix
+    ]
+    ++ lib.optionals (!isWsl && !isDarwin) [
       ./profiles/linux.nix
     ];
 }

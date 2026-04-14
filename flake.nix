@@ -22,14 +22,14 @@
         homeConfigurations =
           let
             mkHome =
-              { system, isWsl }:
+              { system, isWsl, isDarwin ? false }:
               let
                 pkgs = import nixpkgs { inherit system; };
               in
               home-manager.lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [ ./home/default.nix ];
-                extraSpecialArgs = { inherit isWsl; };
+                extraSpecialArgs = { inherit isWsl isDarwin; };
               };
           in
           {
@@ -44,6 +44,7 @@
             darwin = mkHome {
               system = "aarch64-darwin";
               isWsl = false;
+              isDarwin = true;
             };
           };
       };
