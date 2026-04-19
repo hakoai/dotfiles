@@ -4,5 +4,6 @@
     pkgs.nixfmt
     pkgs.dust
     pkgs.nvd
+    pkgs.lftp
   ];
 }
