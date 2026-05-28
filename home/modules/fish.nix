@@ -8,6 +8,8 @@
         mkdir -p "$HOME/.ssh"
         chmod 700 "$HOME/.ssh"
       end
+
+      fish_add_path -g $HOME/.local/bin
     '';
 
     shellInitLast = ''
