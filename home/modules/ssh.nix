@@ -7,13 +7,11 @@ in
     enable = true;
     enableDefaultConfig = false;
 
-    matchBlocks."*" = {
-      extraOptions = {
-        IdentityAgent = agentSock;
-      };
-      serverAliveInterval = 60;
-      serverAliveCountMax = 3;
-      forwardAgent = false;
+    settings."*" = {
+      IdentityAgent = agentSock;
+      ServerAliveInterval = 60;
+      ServerAliveCountMax = 3;
+      ForwardAgent = false;
     };
   };
 }
