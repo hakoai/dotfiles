@@ -5,5 +5,6 @@
     pkgs.dust
     pkgs.nvd
     pkgs.lftp
+    pkgs.zip
   ];
 }
