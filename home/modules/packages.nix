@@ -6,5 +6,6 @@
     pkgs.nvd
     pkgs.lftp
     pkgs.zip
+    pkgs.unzip
   ];
 }
