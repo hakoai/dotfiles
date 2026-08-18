@@ -10,6 +10,7 @@
     ./modules/agents.nix
     ./modules/fish.nix
     ./modules/git.nix
+    ./modules/npm.nix
     ./modules/packages.nix
     ./modules/ssh.nix
     ./modules/tmux.nix
