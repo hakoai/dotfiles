@@ -72,7 +72,7 @@ git branch -a
 追加してはいけないし、逆に生成物と誤認して削除してもいけない。
 判断に迷うファイルは `git ls-files` で追跡状態を確認し、それでも不明ならユーザーに聞く。
 
-リポジトリのルートに CLAUDE.md などの規約ファイルがあれば、生成物の扱いについて
+リポジトリのルートに CLAUDE.md/AGENT.md などの規約ファイルがあれば、生成物の扱いについて
 記述がないか確認する。
 
 ### 3. ブランチを決める
@@ -130,7 +130,7 @@ git switch -c <新しいブランチ名>
 付ける場合の形式（本文との間に空行を 1 行挟む）:
 
 ```
-Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Co-Authored-By: <<<your model name>>>
 ```
 
 コミットの実行にはヒアドキュメントを使う。
@@ -141,9 +141,11 @@ feat: 〇〇を追加
 
 必要なら本文。
 
-Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Co-Authored-By: <<<your model name>>>
 EOF
 ```
+
+<<<your model name>>> はあなた自身の実行モデル名を記述する。
 
 `-m` に改行を含む文字列を渡すとシェルのクォート処理でトラブルになりやすいので避ける。
 
