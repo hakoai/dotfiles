@@ -8,5 +8,6 @@
     pkgs.zip
     pkgs.unzip
     pkgs.nodejs
+    pkgs.gh
   ];
 }
