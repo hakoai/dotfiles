@@ -29,6 +29,7 @@
   programs.zellij.enable = true;
   programs.claude-code.enable = true;
   programs.codex.enable = true;
+  programs.btop.enable = true;
 
   programs.direnv = {
     enable = true;
